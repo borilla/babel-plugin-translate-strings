@@ -1,0 +1,30 @@
+{
+  "name": "@borilla/babel-plugin-translate-strings",
+  "version": "0.1.1",
+  "author": "Borilla",
+  "description": "Babel plugin to translate static strings at compile time",
+  "keywords": [
+    "babel",
+    "plugin",
+    "translate",
+    "translation"
+  ],
+  "license": "MIT",
+  "repository": "borilla/babel-plugin-translate-strings",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "eslint src test",
+    "unit-test": "mocha test",
+    "test": "npm run unit-test && npm run lint",
+    "prepublish": "npm test"
+  },
+  "devDependencies": {
+    "babel-core": "^6.8.0",
+    "chai": "^3.5.0",
+    "eslint": "^2.9.0",
+    "mocha": "^2.4.5"
+  },
+  "dependencies": {
+    "app-root-path": "^1.0.0"
+  }
+}
