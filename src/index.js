@@ -1,4 +1,5 @@
 var appRoot = require('app-root-path');
+var resolveFrom = require('resolve-from');
 
 function plugin(babel) {
 	var t = babel.types;
@@ -11,7 +12,7 @@ function plugin(babel) {
 				var translate = getModuleFunction(opts);
 
 				if (!translateFunction) {
-					throw Error('Need name of translation function');
+					throw Error('No name provided for translation function');
 				}
 
 				if (path.node.callee.name === translateFunction) {
@@ -23,21 +24,28 @@ function plugin(babel) {
 
 	// get translate function from opts passed to plugin
 	function getModuleFunction(opts) {
+		var resolvedPath;
 		var translate;
 
 		if (!opts.module) {
-			throw Error('No path for translation module');
+			throw Error('No path provided for translation module');
+		}
+
+		// resolve provided module path relative to app root
+		resolvedPath = resolveFrom(appRoot.path, opts.module);
+		if (!resolvedPath) {
+			throw Error('Failed to resolve translation module path');
 		}
 
 		// get translation function; either the module itself or a
 		// named function within the module
-		translate = require(appRoot + '/' + opts.module);
+		translate = require(resolvedPath);
 		if (opts.moduleFunction) {
 			translate = translate[opts.moduleFunction];
 		}
 
 		if (typeof translate !== 'function') {
-			throw Error('Problem with translation module');
+			throw Error('Problem with translation module. Possibly missing "moduleFunction" option');
 		}
 
 		return translate;
@@ -51,7 +59,7 @@ function plugin(babel) {
 		if (args.indexOf(undefined) < 0) {
 			translation = translate.apply(null, args);
 
-			if (isString(translation)) {
+			if (typeof translation === 'string') {
 				newNode = t.valueToNode(translation);
 				path.replaceWith(newNode);
 			}
@@ -65,10 +73,6 @@ function plugin(babel) {
 		if (evaluated.confident) {
 			return evaluated.value;
 		}
-	}
-
-	function isString(str) {
-		return typeof str === 'string';
 	}
 }
 

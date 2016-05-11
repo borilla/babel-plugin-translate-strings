@@ -5,7 +5,7 @@ var plugin = require('../src/index.js');
 function transformCode(code) {
 	var result = babel.transform(code, {
 		plugins: [
-			[ plugin, { translateFunction: '_T', module: '/test/fixtures/translate', moduleFunction: 'translate' } ]
+			[ plugin, { translateFunction: '_T', module: './test/fixtures/translate', moduleFunction: 'translate' } ]
 		]
 	});
 
