@@ -39,8 +39,8 @@ __Note:__ The translate function can only be applied if we can resolve the argum
 
 ## Plugin options
 
-__`translateFunction`__: Function name to look for in source code
-
-__`module`__: Path to module containing our translate function. In order to find the module, this path must be __relative to the root of the application__
-
-__`moduleFunction`__: Name of the translate function exported by the module. If this is not provided then it is assumed the module exports a single function, which is the translate function
+| Option | Description |
+| ------ | --- |
+| __translateFunction__ | Function name to look for in source code |
+| __module__ | Path to module containing our translate function. In order to find the module, this path must be __relative to the root of the application__ |
+| __moduleFunction__ | Name of the translate function exported by the module. If this is not provided then it is assumed the module exports a single function, which is the translate function |
