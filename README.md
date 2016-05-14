@@ -5,6 +5,7 @@ Babel plugin to translate static strings at compile time
 ## TOC
 
 * [Installation](#installation)
+* [What it does](#what-it-does)
 * [Plugin options](#plugin-options)
 
 ## Installation
