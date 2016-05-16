@@ -5,7 +5,7 @@ var plugin = require('../src/index.js');
 function transformCode(code) {
 	var result = babel.transform(code, {
 		plugins: [
-			[ plugin, { translateFunction: '_T', module: './test/fixtures/translate', moduleFunction: 'translate' } ]
+			[ plugin, { translateFunctionName: '_T', module: './test/fixtures/translate', moduleFunctionName: 'translate' } ]
 		]
 	});
 
@@ -29,21 +29,12 @@ describe('babel-plugin-translate-strings', function () {
 		});
 	});
 
-	describe('when call expression called with more than one arg', function () {
-		before(function () {
-			code = '_T("foo", "A", "B");';
-		});
-
-		it('should pass all arguments to translate function', function () {
-			expect(result).to.equal('"AfooB";');
-		});
-	});
-	describe('when call expression called with double-quoted string', function () {
+	describe('when call expression called with (double-quoted) string', function () {
 		before(function () {
 			code = '_T("foo");';
 		});
 
-		it('should replace function with double-quoted translation', function () {
+		it('should replace function with (double-quoted) translation', function () {
 			expect(result).to.equal('"TfooT";');
 		});
 	});
@@ -77,6 +68,16 @@ describe('babel-plugin-translate-strings', function () {
 			});
 		});
 */
+	});
+
+	describe('when call expression called with more than one arg', function () {
+		before(function () {
+			code = '_T("foo", "A", "B");';
+		});
+
+		it('should pass all arguments to translate function', function () {
+			expect(result).to.equal('"AfooB";');
+		});
 	});
 
 	describe('when call expression called with concatenated strings', function () {

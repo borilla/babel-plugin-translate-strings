@@ -1,6 +1,6 @@
 {
   "name": "@borilla/babel-plugin-translate-strings",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "author": "Borilla",
   "description": "Babel plugin to translate static strings at compile time",
   "keywords": [

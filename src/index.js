@@ -6,58 +6,66 @@ function plugin(babel) {
 
 	return {
 		visitor: {
-			CallExpression: function (path, state) {
-				var opts = state.opts;
-				var translateFunction = opts.translateFunction || opts.moduleFunction;
-				var translate = getModuleFunction(opts);
+			Program: function (path, state) {
+				this.translateFunctionName = getTranslateFunctionName(state.opts);
+				this.moduleFunction = getModuleFunction(state.opts);
+			},
 
-				if (!translateFunction) {
-					throw Error('No name provided for translation function');
-				}
-
-				if (path.node.callee.name === translateFunction) {
-					visitMatchingFunctionCall(path, translate);
+			CallExpression: function (path) {
+				if (path.node.callee.name === this.translateFunctionName) {
+					visitMatchingFunctionCall(path, this.moduleFunction);
 				}
 			}
 		}
 	};
 
-	// get translate function from opts passed to plugin
+	// get name of function to match in source, from opts passed to plugin
+	function getTranslateFunctionName(opts) {
+		var translateFunctionName = opts.translateFunctionName || opts.moduleFunctionName;
+
+		if (!translateFunctionName) {
+			throwError('No name provided for translation function');
+		}
+
+		return translateFunctionName;
+	}
+
+	// get module function to perform translation from opts passed to plugin
 	function getModuleFunction(opts) {
 		var resolvedPath;
-		var translate;
+		var moduleFunction;
 
 		if (!opts.module) {
-			throw Error('No path provided for translation module');
+			throwError('No path provided for module');
 		}
 
 		// resolve provided module path relative to app root
 		resolvedPath = resolveFrom(appRoot.path, opts.module);
 		if (!resolvedPath) {
-			throw Error('Failed to resolve translation module path');
+			throwError('Failed to resolve module path');
 		}
 
 		// get translation function; either the module itself or a
 		// named function within the module
-		translate = require(resolvedPath);
-		if (opts.moduleFunction) {
-			translate = translate[opts.moduleFunction];
+		moduleFunction = require(resolvedPath);
+		if (opts.moduleFunctionName) {
+			moduleFunction = moduleFunction[opts.moduleFunctionName];
 		}
 
-		if (typeof translate !== 'function') {
-			throw Error('Problem with translation module. Possibly missing "moduleFunction" option');
+		if (typeof moduleFunction !== 'function') {
+			throwError('Problem with module. Possibly missing "moduleFunction" option');
 		}
 
-		return translate;
+		return moduleFunction;
 	}
 
 	// replace function call with result of translation, if possible
-	function visitMatchingFunctionCall(path, translate) {
+	function visitMatchingFunctionCall(path, moduleFunction) {
 		var args = path.get('arguments').map(getEvaluatedValue);
 		var translation, newNode;
 
 		if (args.indexOf(undefined) < 0) {
-			translation = translate.apply(null, args);
+			translation = moduleFunction.apply(null, args);
 
 			if (typeof translation === 'string') {
 				newNode = t.valueToNode(translation);
@@ -73,6 +81,10 @@ function plugin(babel) {
 		if (evaluated.confident) {
 			return evaluated.value;
 		}
+	}
+
+	function throwError(msg) {
+		throw Error('babel-plugin-translate-strings: ' + msg);
 	}
 }
 

@@ -20,9 +20,9 @@ Then, in babel configuration (usually in your .babelrc file), add the plugin to 
 {
   "plugins": [
     [ "@borilla/babel-plugin-translate-strings", {
-      "translateFunction": "_T",
+      "translateFunctionName": "_T",
       "module": "./src/translate",
-      "moduleFunction": "translate"
+      "moduleFunctionName": "translate"
     } ]
   ]
 }
@@ -30,7 +30,7 @@ Then, in babel configuration (usually in your .babelrc file), add the plugin to 
 
 ## What it does
 
-When applied to a source file, this will look through your source for code that looks like a call to `translateFunction`, apply the module function to its argument(s) and replace the code with the result, ie
+When applied to a source file, this will look through your source for code that looks like a call to `translateFunctionName`, apply the module function to its argument(s) and replace the code with the result, ie
 ```js
 var s = _T('string to translate');   --->   var s = 'the translated string';
 ```
@@ -41,6 +41,6 @@ __Note:__ The translate function can only be applied if we can resolve the argum
 
 | Option | Description |
 | ------ | --- |
-| __translateFunction__ | Function name to look for in source code |
-| __module__ | Path to module containing our translate function. In order to find the module, this path must be __relative to the root of the application__ |
-| __moduleFunction__ | Name of the translate function exported by the module. If this is not provided then it is assumed the module exports a single function, which is the translate function |
+| __translateFunctionName__ | Function name to look for in source code |
+| __module__ | Path to module containing our translate function (__relative to the root of the application__) |
+| __moduleFunctionName__ | Name of the translate function exported by the module. If this is not provided then it is assumed the module exports a single function, which is the translate function |
